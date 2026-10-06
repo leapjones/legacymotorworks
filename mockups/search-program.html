@@ -1,0 +1,341 @@
+<title>Legacy Search Program</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Audiowide&family=Saira+Condensed:wght@600;700;800&family=Saira:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a race-control readout. Dark canvas, timing-sheet tables, volt used only as the spark. Built to legacy-motorworks.tokens.json v2. */
+:root {
+  --canvas: #000000;
+  --surface: #161415;
+  --raised: #1E1B1C;
+  --graphite: #363233;
+  --text: #FFFFFF;
+  --ash: #A8A6A7;
+  --volt: #C7E164;
+  --warn: #FF5C4A;
+  --f-mark: "Audiowide", "Saira Condensed", system-ui, sans-serif;
+  --f-display: "Saira Condensed", "Arial Narrow", system-ui, sans-serif;
+  --f-body: "Saira", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--canvas); color: var(--text); font-family: var(--f-body); font-size: 16px; line-height: 1.55; margin: 0; }
+.wrap { max-width: 1080px; margin: 0 auto; padding-inline: 20px; padding-block: 32px 64px; display: grid; gap: 56px; }
+a { color: var(--volt); }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--volt); outline-offset: 2px; }
+
+/* Masthead */
+.mast { display: grid; gap: 18px; border-bottom: 1px solid var(--graphite); padding-bottom: 28px; }
+.mark { font-family: var(--f-mark); font-size: 20px; letter-spacing: .06em; color: var(--text); }
+.mark span { color: var(--volt); }
+.eyebrow { font-family: var(--f-mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--ash); }
+h1 { font-family: var(--f-display); font-weight: 800; font-size: clamp(40px, 7vw, 72px); line-height: .95; margin: 0; text-transform: uppercase; text-wrap: balance; }
+h1 em { font-style: normal; color: var(--volt); }
+.lede { max-width: 64ch; color: var(--ash); margin: 0; font-size: 17px; }
+.lede strong { color: var(--text); font-weight: 600; }
+.banner { display: flex; gap: 12px; align-items: flex-start; background: var(--surface); border-left: 3px solid var(--warn); padding: 14px 16px; max-width: 760px; }
+.banner b { font-family: var(--f-mono); font-size: 12px; letter-spacing: .1em; color: var(--warn); white-space: nowrap; padding-top: 2px; }
+.banner p { margin: 0; font-size: 15px; }
+
+/* Section heads */
+section { display: grid; gap: 20px; }
+.sh { display: grid; gap: 6px; }
+.sh .num { font-family: var(--f-mono); font-size: 12px; color: var(--volt); letter-spacing: .12em; }
+h2 { font-family: var(--f-display); font-weight: 700; font-size: clamp(28px, 4vw, 38px); line-height: 1; margin: 0; text-transform: uppercase; letter-spacing: .01em; text-wrap: balance; }
+.sh p { margin: 0; color: var(--ash); max-width: 66ch; }
+
+/* Three lanes */
+.lanes { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1px; background: var(--graphite); border: 1px solid var(--graphite); }
+.lane { background: var(--surface); padding: 22px 20px; display: grid; gap: 10px; align-content: start; min-width: 0; }
+.lane .tag { font-family: var(--f-display); font-weight: 800; font-size: 34px; line-height: 1; color: var(--volt); }
+.lane h3 { font-family: var(--f-display); font-weight: 700; font-size: 22px; margin: 0; text-transform: uppercase; }
+.lane p { margin: 0; color: var(--ash); font-size: 15px; }
+.lane .q { font-family: var(--f-mono); font-size: 13px; color: var(--text); background: var(--canvas); padding: 10px 12px; border: 1px solid var(--graphite); }
+
+/* Tables */
+.tbl { overflow-x: auto; border: 1px solid var(--graphite); }
+table { border-collapse: collapse; width: 100%; min-width: 760px; font-size: 14px; }
+th { text-align: left; font-family: var(--f-mono); font-weight: 600; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--ash); background: var(--surface); padding: 12px 14px; border-bottom: 1px solid var(--graphite); }
+td { padding: 13px 14px; border-bottom: 1px solid var(--graphite); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+td.n { font-family: var(--f-mono); font-variant-numeric: tabular-nums; color: var(--ash); width: 44px; }
+td.dim { font-weight: 600; width: 190px; }
+td small { display: block; color: var(--ash); font-size: 13px; margin-top: 3px; }
+.mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+
+/* Evidence chips: state in form, not just words */
+.chip { display: inline-block; font-family: var(--f-mono); font-size: 11px; letter-spacing: .08em; padding: 3px 7px; border: 1px solid var(--graphite); white-space: nowrap; }
+.chip.obs { color: var(--canvas); background: var(--volt); border-color: var(--volt); }
+.chip.inf { color: var(--text); background: var(--raised); }
+.chip.unv { color: var(--warn); border-color: var(--warn); }
+.chip.pend { color: var(--ash); border-style: dashed; }
+
+/* Sample score bar */
+.score { display: grid; gap: 6px; width: 120px; }
+.score .v { font-family: var(--f-mono); font-size: 13px; color: var(--ash); }
+.bar { height: 6px; background: var(--raised); position: relative; }
+.bar i { position: absolute; inset: 0 auto 0 0; background: repeating-linear-gradient(45deg, var(--ash) 0 3px, transparent 3px 6px); opacity: .55; }
+
+/* AEO answer block mock */
+.aeo { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: 20px; }
+@media (max-width: 760px) { .aeo { grid-template-columns: 1fr; } }
+.page-mock { background: var(--surface); border: 1px solid var(--graphite); padding: 22px; display: grid; gap: 14px; min-width: 0; }
+.page-mock .url { font-family: var(--f-mono); font-size: 12px; color: var(--ash); }
+.page-mock h3 { font-family: var(--f-display); font-weight: 700; font-size: 26px; margin: 0; text-transform: uppercase; line-height: 1.05; }
+.answer { border-left: 3px solid var(--volt); padding: 4px 0 4px 14px; margin: 0; font-size: 16px; }
+.cost { display: grid; grid-template-columns: 1fr auto; gap: 0; border: 1px solid var(--graphite); }
+.cost div { padding: 9px 12px; border-bottom: 1px solid var(--graphite); font-size: 14px; }
+.cost div:nth-last-child(-n+2) { border-bottom: 0; }
+.cost .mono { text-align: right; color: var(--text); }
+.src { font-size: 12px; color: var(--ash); margin: 0; }
+.notes { display: grid; gap: 12px; align-content: start; }
+.note { background: var(--canvas); border: 1px solid var(--graphite); padding: 14px 16px; }
+.note b { display: block; font-family: var(--f-mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--volt); margin-bottom: 4px; }
+.note p { margin: 0; font-size: 14px; color: var(--ash); }
+.note.flag b { color: var(--warn); }
+
+/* GEO grid */
+.geo td.cell { text-align: center; width: 104px; }
+
+/* Roadmap */
+.road { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.phase { background: var(--surface); border-top: 3px solid var(--graphite); padding: 20px; display: grid; gap: 12px; align-content: start; min-width: 0; }
+.phase:first-child { border-top-color: var(--volt); }
+.phase .when { font-family: var(--f-mono); font-size: 12px; color: var(--ash); letter-spacing: .1em; }
+.phase h3 { font-family: var(--f-display); font-weight: 700; font-size: 24px; margin: 0; text-transform: uppercase; }
+.phase ul { margin: 0; padding-left: 18px; display: grid; gap: 8px; font-size: 14.5px; }
+.phase li span { color: var(--ash); }
+
+/* KPI tiles */
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1px; background: var(--graphite); border: 1px solid var(--graphite); }
+.kpi { background: var(--canvas); padding: 18px 16px; display: grid; gap: 6px; align-content: start; }
+.kpi .lab { font-size: 13px; color: var(--ash); min-height: 2.6em; }
+.kpi .val { font-family: var(--f-mono); font-size: 30px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--text); line-height: 1; }
+.kpi .tgt { font-family: var(--f-mono); font-size: 11px; color: var(--ash); letter-spacing: .06em; }
+
+/* Carry-over compare */
+.compare { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+.col { border: 1px solid var(--graphite); padding: 20px; display: grid; gap: 10px; align-content: start; }
+.col h3 { font-family: var(--f-display); font-weight: 700; font-size: 22px; margin: 0; text-transform: uppercase; }
+.col ul { margin: 0; padding-left: 18px; display: grid; gap: 7px; font-size: 14.5px; color: var(--ash); }
+.col li b { color: var(--text); font-weight: 600; }
+
+/* Decisions */
+.decide { display: grid; gap: 1px; background: var(--graphite); border: 1px solid var(--graphite); counter-reset: d; }
+.decide div { background: var(--surface); padding: 16px 18px; display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 10px; font-size: 15px; }
+.decide div::before { counter-increment: d; content: counter(d, decimal-leading-zero); font-family: var(--f-mono); color: var(--volt); font-size: 13px; padding-top: 2px; }
+.decide p { margin: 0; }
+.decide p span { color: var(--ash); display: block; font-size: 14px; margin-top: 2px; }
+
+.cta-row { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+.cta { font-family: var(--f-display); font-weight: 700; font-size: 20px; text-transform: uppercase; letter-spacing: .03em; background: var(--volt); color: var(--canvas); padding: 12px 20px; border: 0; text-decoration: none; }
+footer { border-top: 1px solid var(--graphite); padding-top: 20px; font-size: 13px; color: var(--ash); display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
+</style>
+
+<div class="wrap">
+
+<header class="mast">
+  <div class="mark">LEGACY<span>/</span>MOTORWORKS</div>
+  <div class="eyebrow">Mockup · Search visibility program · Oct 2026</div>
+  <h1>Found on Google. Quoted by the <em>AI answer.</em></h1>
+  <p class="lede">The same SEO, AEO, and GEO program running for Leap Advisory Partners, rebuilt for <strong>legacy-motorworks.com</strong>. Same audit, same evidence labels, same 30/60/90 roadmap. Different reader: racers, arrive-and-drive clients, and a paddock that reads everything.</p>
+  <div class="banner"><b>SAMPLE</b><p>This is the shape of the program, not its results. The live crawl and the AI prompt baseline haven't run yet, so every score is a placeholder. The only findings marked OBSERVED come from the October 5 site scan in the build brief.</p></div>
+</header>
+
+<section>
+  <div class="sh"><span class="num">THE THREE LANES</span><h2>What each lane wins</h2></div>
+  <div class="lanes">
+    <div class="lane">
+      <div class="tag">SEO</div>
+      <h3>Rank for the buying search</h3>
+      <p>The person typing a car into Google with a checkbook open. Owns the blue link.</p>
+      <div class="q">"SpecE46 for sale"</div>
+    </div>
+    <div class="lane">
+      <div class="tag">AEO</div>
+      <h3>Be the answer box</h3>
+      <p>Featured snippets and People Also Ask. A 40 to 60 word answer, sourced, at the top of the page.</p>
+      <div class="q">"how much does a Spec E46 cost"</div>
+    </div>
+    <div class="lane">
+      <div class="tag">GEO</div>
+      <h3>Get named by the AI</h3>
+      <p>ChatGPT, Perplexity, Gemini, Claude, and Google's AI Overviews. They cite pages with clear facts and outside proof.</p>
+      <div class="q">"who builds Spec E46 race cars in California"</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sh"><span class="num">STEP 1 · AUDIT</span><h2>The ten-point scorecard</h2><p>Same ten dimensions as the Leap audit. Each one gets a score, a confidence level, the evidence, and what it costs the business. Scores below are hatched because they're placeholders.</p></div>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>#</th><th>Dimension</th><th>Score</th><th>Evidence</th><th>What we know now</th></tr></thead>
+      <tbody>
+        <tr><td class="n">01</td><td class="dim">Technical SEO</td><td><div class="score"><span class="v">_/10 sample</span><div class="bar"><i style="width:50%"></i></div></div></td><td><span class="chip unv">UNVERIFIED</span></td><td>Crawl pending. Titles, canonicals, sitemap, robots, and speed get checked on day one.<small>The site is hosted on a GHL custom site or Vercel. GoDaddy is registrar only.</small></td></tr>
+        <tr><td class="n">02</td><td class="dim">Content</td><td><div class="score"><span class="v">_/10 sample</span><div class="bar"><i style="width:35%"></i></div></div></td><td><span class="chip obs">OBSERVED</span></td><td>No blog. A podcast section. A gallery of 16+ named builds. Contact form only.<small>Source: Oct 5 scan. The gallery is the best raw material on the site.</small></td></tr>
+        <tr><td class="n">03</td><td class="dim">E-E-A-T</td><td><div class="score"><span class="v">_/10 sample</span><div class="bar"><i style="width:55%"></i></div></div></td><td><span class="chip inf">INFERRED</span></td><td>Strong proof exists off-site: the 2023 Performance Racing Industry business profile and the 2022 Nationals results. Whether the site links to it is unconfirmed.</td></tr>
+        <tr><td class="n">04</td><td class="dim">Schema</td><td><div class="score"><span class="v">_/10 sample</span><div class="bar"><i style="width:20%"></i></div></div></td><td><span class="chip unv">UNVERIFIED</span></td><td>Organization and LocalBusiness (Elk Grove, CA) JSON-LD are already in the Phase 1 build plan.</td></tr>
+        <tr><td class="n">05</td><td class="dim">Featured snippets</td><td><div class="score"><span class="v">_/10 sample</span><div class="bar"><i style="width:15%"></i></div></div></td><td><span class="chip inf">INFERRED</span></td><td>No question-and-answer content on the site means nothing for Google to lift into a snippet.</td></tr>
+        <tr><td class="n">06</td><td class="dim">People Also Ask</td><td><div class="score"><span class="v">_/10 sample</span><div class="bar"><i style="width:15%"></i></div></div></td><td><span class="chip inf">INFERRED</span></td><td>Same gap as snippets. The hub page FAQ fixes both.</td></tr>
+        <tr><td class="n">07</td><td class="dim">AI citation readiness</td><td><div class="score"><span class="v">_/10 sample</span><div class="bar"><i style="width:20%"></i></div></div></td><td><span class="chip inf">INFERRED</span></td><td>AI engines quote pages with dated, sourced facts. The site has no cost, rules, or buying page to quote.</td></tr>
+        <tr><td class="n">08</td><td class="dim">Topical authority</td><td><div class="score"><span class="v">_/10 sample</span><div class="bar"><i style="width:30%"></i></div></div></td><td><span class="chip obs">OBSERVED</span></td><td>The homepage claims three classes (SPEC E46, RUSH SR, SPEC Boxster) with no depth page behind any of them.<small>The brief records the tagline as "Boxter." If that's live, it misses every "Boxster" search. Check on the crawl.</small></td></tr>
+        <tr><td class="n">09</td><td class="dim">AI visibility</td><td><div class="score"><span class="v">_/10 sample</span><div class="bar"><i style="width:25%"></i></div></div></td><td><span class="chip pend">PENDING</span></td><td>Measured by the prompt panel below. Baseline runs before any page changes so the lift is real.</td></tr>
+        <tr><td class="n">10</td><td class="dim">Competitive position</td><td><div class="score"><span class="v">_/10 sample</span><div class="bar"><i style="width:60%"></i></div></div></td><td><span class="chip obs">OBSERVED</span></td><td>No one publishes a Spec E46 baseline setup sheet or a checklist for inspecting an already-built race car. Those two gaps are the free products.<small>Source: Oct 5 national competitive scan. Competitors are never named on Legacy pages.</small></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="sh"><span class="num">STEP 2 · QUERY MAP</span><h2>Every search gets one page</h2><p>One owner page per query, so Legacy pages don't compete with each other. Targets 1 to 6 come straight from the build brief.</p></div>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>Query</th><th>Lane</th><th>Who's searching</th><th>Page that answers it</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>SpecE46 build</td><td class="mono">SEO</td><td>Arrive-and-drive prospect</td><td>The Spec E46 Resource (hub)</td><td><span class="chip pend">PHASE 1</span></td></tr>
+        <tr><td>SpecE46 for sale</td><td class="mono">SEO</td><td>Buyer with budget set</td><td>Hub, then Pre-Purchase Review</td><td><span class="chip pend">PHASE 1</span></td></tr>
+        <tr><td>SpecE46 builder</td><td class="mono">SEO · GEO</td><td>Arrive-and-drive prospect</td><td>Hub plus build gallery</td><td><span class="chip pend">PHASE 1</span></td></tr>
+        <tr><td>BMW E46 grassroots racing</td><td class="mono">SEO</td><td>Curious, not yet in the sport</td><td>Hub: what Spec E46 is</td><td><span class="chip pend">PHASE 1</span></td></tr>
+        <tr><td>SpecE46 spec sheet</td><td class="mono">AEO</td><td>Hands-on builder</td><td>Baseline Setup Sheet</td><td><span class="chip pend">PETER VALUES</span></td></tr>
+        <tr><td>how to buy a SpecE46</td><td class="mono">AEO · GEO</td><td>Buyer, first car</td><td>Inspection Checklist page</td><td><span class="chip pend">PHASE 1</span></td></tr>
+        <tr><td>how much does a Spec E46 cost</td><td class="mono">AEO · GEO</td><td>Anyone pricing the sport</td><td>Hub: what it costs</td><td><span class="chip pend">PHASE 1</span></td></tr>
+        <tr><td>Spec E46 arrive and drive California</td><td class="mono">SEO · GEO</td><td>Time-poor exec</td><td>Services page</td><td><span class="chip pend">PHASE 2</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="sh"><span class="num">STEP 3 · AEO</span><h2>What an answer block looks like</h2><p>A mock of one block on the hub page. Short, sourced, and dated, so Google can lift it and an AI engine can quote it.</p></div>
+  <div class="aeo">
+    <div class="page-mock">
+      <div class="url">legacy-motorworks.com/spec-e46 · #what-it-costs</div>
+      <h3>How much does a Spec E46 cost?</h3>
+      <p class="answer">Per NASA, a used Spec E46 runs $25K to $35K and a new, ready-to-race car runs $35K to $55K. A race weekend runs $1,500 to $2,000. If you'd rather build in phases, a used car is the right way in.</p>
+      <div class="cost">
+        <div>Used car</div><div class="mono">$25K to $35K</div>
+        <div>New, ready to race</div><div class="mono">$35K to $55K</div>
+        <div>Race weekend</div><div class="mono">$1,500 to $2,000</div>
+      </div>
+      <p class="src">Source: NASA, drivenasa.com/road-racing/spec-e46. Figures per NASA. Accessed Oct 2026.</p>
+    </div>
+    <div class="notes">
+      <div class="note"><b>Why it's built this way</b><p>Answer first, in under 60 words. Then the table. Then the source line. That's the pattern snippets and AI engines both pull from.</p></div>
+      <div class="note"><b>Schema</b><p>FAQPage markup on the hub, wrapping each question. Rules are always attributed to NASA, never stated as Legacy's.</p></div>
+      <div class="note flag"><b>Number conflict to settle</b><p>Peter's interview figure for a weekend all in is $3,000 to $4,000. NASA's page says $1,500 to $2,000. Publish NASA's, attributed, or show both with labels? One number per page.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sh"><span class="num">STEP 4 · GEO</span><h2>The monthly prompt panel</h2><p>The same prompts, run in five AI engines, every month. Each cell records whether Legacy is cited with a link, mentioned by name, or absent. This is the scorecard that moves dimension 09.</p></div>
+  <div class="tbl geo">
+    <table>
+      <thead><tr><th>Prompt</th><th>ChatGPT</th><th>Perplexity</th><th>Gemini</th><th>Claude</th><th>AI Overview</th></tr></thead>
+      <tbody>
+        <tr><td>Who builds Spec E46 race cars in California?</td><td class="cell"><span class="chip pend">BASELINE</span></td><td class="cell"><span class="chip pend">BASELINE</span></td><td class="cell"><span class="chip pend">BASELINE</span></td><td class="cell"><span class="chip pend">BASELINE</span></td><td class="cell"><span class="chip pend">BASELINE</span></td></tr>
+        <tr><td>How much does it cost to race Spec E46?</td><td class="cell"><span class="chip pend">BASELINE</span></td><td class="cell"><span class="chip pend">BASELINE</span></td><td class="cell"><span class="chip pend">BASELINE</span></td><td class="cell"><span class="chip pend">BASELINE</span></td><td class="cell"><span class="chip pend">BASELINE</span></td></tr>
+        <tr><td>What should I check before buying a used Spec E46?</td><td class="cell"><span class="chip pend">BASELINE</span></td><td class="cell"><span class="chip pend">BASELINE</span></td><td class="cell"><span class="chip pend">BASELINE</span></td><td class="cell"><span class="chip pend">BASELINE</span></td><td class="cell"><span class="chip pend">BASELINE</span></td></tr>
+        <tr><td>Is there an arrive-and-drive Spec E46 program in NorCal?</td><td class="cell"><span class="chip pend">BASELINE</span></td><td class="cell"><span class="chip pend">BASELINE</span></td><td class="cell"><span class="chip pend">BASELINE</span></td><td class="cell"><span class="chip pend">BASELINE</span></td><td class="cell"><span class="chip pend">BASELINE</span></td></tr>
+        <tr><td>Is there a Spec E46 baseline setup sheet?</td><td class="cell"><span class="chip pend">BASELINE</span></td><td class="cell"><span class="chip pend">BASELINE</span></td><td class="cell"><span class="chip pend">BASELINE</span></td><td class="cell"><span class="chip pend">BASELINE</span></td><td class="cell"><span class="chip pend">BASELINE</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="src">Legend once it runs: <span class="chip obs">CITED</span> linked as a source · <span class="chip inf">NAMED</span> mentioned without a link · <span class="chip unv">ABSENT</span> not in the answer.</p>
+</section>
+
+<section>
+  <div class="sh"><span class="num">STEP 5 · ROADMAP</span><h2>30 / 60 / 90</h2><p>Mapped onto the Phase 1 and Phase 2 build already scoped, so the search work and the site build ship as one plan.</p></div>
+  <div class="road">
+    <div class="phase">
+      <div class="when">DAYS 1 TO 30</div>
+      <h3>Baseline and the hub</h3>
+      <ul>
+        <li>Full crawl and the prompt panel baseline <span>(before anything changes)</span></li>
+        <li>Ship The Spec E46 Resource with Organization and LocalBusiness schema</li>
+        <li>Inspection Checklist signup live in GHL</li>
+        <li>Fix titles and meta on every indexed page</li>
+        <li>Retire the old uniqueness claim sitewide</li>
+      </ul>
+    </div>
+    <div class="phase">
+      <div class="when">DAYS 31 TO 60</div>
+      <h3>Answers and depth</h3>
+      <ul>
+        <li>FAQPage schema on the hub</li>
+        <li>Baseline Setup Sheet page, once Peter supplies the values</li>
+        <li>One indexed page per gallery build <span>(Peter-approved details only)</span></li>
+        <li>Podcast episodes get their own pages with transcripts</li>
+        <li>Gallery and podcast pages link back to the hub</li>
+      </ul>
+    </div>
+    <div class="phase">
+      <div class="when">DAYS 61 TO 90</div>
+      <h3>Proof and services</h3>
+      <ul>
+        <li>Services page with Service schema <span>(Phase 2)</span></li>
+        <li>Link the site to its outside proof: the PRI profile and race results</li>
+        <li>Answer questions in Spec E46 community threads, linking only when the page answers the question</li>
+        <li>Rerun the prompt panel and the scorecard against the baseline</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sh"><span class="num">STEP 6 · KPI DASHBOARD</span><h2>What gets reported monthly</h2><p>Blank on purpose. Every number fills in from the day-one baseline, and the targets get set after it, not before.</p></div>
+  <div class="kpis">
+    <div class="kpi"><div class="lab">Pages indexed by Google</div><div class="val">TBD</div><div class="tgt">BASELINE DAY 1</div></div>
+    <div class="kpi"><div class="lab">Target queries in the top 10</div><div class="val">TBD / 8</div><div class="tgt">QUERY MAP ABOVE</div></div>
+    <div class="kpi"><div class="lab">Snippets and PAA boxes owned</div><div class="val">TBD</div><div class="tgt">AFTER FAQ SHIPS</div></div>
+    <div class="kpi"><div class="lab">AI prompts citing or naming Legacy</div><div class="val">TBD / 25</div><div class="tgt">5 PROMPTS × 5 ENGINES</div></div>
+    <div class="kpi"><div class="lab">Inspection Checklist signups</div><div class="val">TBD</div><div class="tgt">FROM GHL</div></div>
+    <div class="kpi"><div class="lab">Inquiries from search</div><div class="val">TBD</div><div class="tgt">GHL SOURCE TAG</div></div>
+  </div>
+</section>
+
+<section>
+  <div class="sh"><span class="num">LEAP TO LEGACY</span><h2>What carries over, what changes</h2></div>
+  <div class="compare">
+    <div class="col">
+      <h3>Same as Leap</h3>
+      <ul>
+        <li><b>Ten-dimension audit</b> with score, confidence, evidence, and business impact</li>
+        <li><b>OBSERVED, INFERRED, UNVERIFIED</b> on every finding</li>
+        <li><b>30/60/90 roadmap</b> and a printable checklist</li>
+        <li><b>KPI dashboard</b>, reported monthly</li>
+        <li><b>Monthly AI prompt panel</b> for GEO</li>
+      </ul>
+    </div>
+    <div class="col">
+      <h3>Different for Legacy</h3>
+      <ul>
+        <li><b>Local matters.</b> Elk Grove LocalBusiness schema and the Google Business Profile <span>(ownership unconfirmed)</span></li>
+        <li><b>Peter signs off</b> on every technical line before it's indexed</li>
+        <li><b>The tradecraft wall.</b> Pages say what the Legacy Standard checks, never how</li>
+        <li><b>Authority comes from the paddock:</b> race results, NASA and BMW CCA coverage, community answers</li>
+        <li><b>No competitor names,</b> in copy or in the public audit</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sh"><span class="num">OPEN CALLS</span><h2>Four decisions for LJ</h2></div>
+  <div class="decide">
+    <div><p>Weekend cost: NASA's $1,500 to $2,000 or Peter's $3,000 to $4,000 all in?<span>The hub can carry one figure cleanly. Two figures need two labels.</span></p></div>
+    <div><p>RUSH SR and SPEC Boxster: hub pages later, or drop them from the homepage tagline?<span>Claiming three classes with one deep page dilutes the Spec E46 signal.</span></p></div>
+    <div><p>Who owns the Google Business Profile for Elk Grove?<span>Local search and AI Overviews both read it. Needs a login check.</span></p></div>
+    <div><p>The "West Coast's most documented Spec E46 builder" line: approve it or not?<span>AI engines repeat a clear one-line claim. Until it's approved, the hub runs on "Built to the Legacy Standard" alone.</span></p></div>
+  </div>
+  <div class="cta-row"><span class="cta">Run the baseline crawl</span><span class="src">Step one fills in every number on this page.</span></div>
+</section>
+
+<footer>
+  <span>Legacy Motorworks · Elk Grove, CA · Mockup only, not for publication</span>
+  <span>Facts sourced to NASA, Performance Racing Industry, and the Oct 5, 2026 scan</span>
+</footer>
+
+</div>
