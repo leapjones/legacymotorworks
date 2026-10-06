@@ -1,0 +1,95 @@
+/* Legacy Motorworks blog. Built to legacy-motorworks.tokens.json v2.
+   Dark canvas, volt as the spark only. Saira Condensed never below 20px. */
+:root {
+  --canvas: #000000;
+  --surface: #161415;
+  --raised: #1E1B1C;
+  --graphite: #363233;
+  --text: #FFFFFF;
+  --ash: #A8A6A7;
+  --volt: #C7E164;
+  --warn: #FF5C4A;
+  --f-mark: "Audiowide", "Saira Condensed", system-ui, sans-serif;
+  --f-display: "Saira Condensed", "Arial Narrow", system-ui, sans-serif;
+  --f-body: "Saira", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { background: var(--canvas); color: var(--text); font-family: var(--f-body); font-size: 17px; line-height: 1.65; margin: 0; }
+a { color: var(--volt); text-underline-offset: 3px; }
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--volt); outline-offset: 2px; }
+img { max-width: 100%; height: auto; }
+
+.shell { max-width: 1080px; margin: 0 auto; padding-inline: 20px; }
+
+/* Header */
+.site-head { border-bottom: 1px solid var(--graphite); }
+.site-head .shell { display: flex; flex-wrap: wrap; gap: 12px 28px; align-items: center; justify-content: space-between; padding-block: 18px; }
+.mark { font-family: var(--f-mark); font-size: 20px; letter-spacing: .06em; color: var(--text); text-decoration: none; }
+.mark span { color: var(--volt); }
+.nav { display: flex; flex-wrap: wrap; gap: 6px 22px; font-size: 15px; }
+.nav a { color: var(--ash); text-decoration: none; }
+.nav a:hover, .nav a[aria-current="page"] { color: var(--text); }
+
+/* Draft banner: remove on publish */
+.draft { background: var(--surface); border-bottom: 1px solid var(--warn); }
+.draft .shell { padding-block: 10px; font-size: 14px; display: flex; gap: 12px; flex-wrap: wrap; }
+.draft b { font-family: var(--f-mono); font-size: 12px; letter-spacing: .1em; color: var(--warn); }
+
+.eyebrow { font-family: var(--f-mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--ash); }
+h1, h2, h3 { font-family: var(--f-display); text-transform: uppercase; line-height: 1.02; text-wrap: balance; margin: 0; }
+h1 { font-weight: 800; font-size: clamp(38px, 6.5vw, 64px); }
+h2 { font-weight: 700; font-size: clamp(26px, 3.6vw, 32px); }
+h3 { font-weight: 700; font-size: 22px; }
+
+/* Index */
+.hero { display: grid; gap: 14px; padding-block: 48px 36px; border-bottom: 1px solid var(--graphite); }
+.hero p { margin: 0; max-width: 60ch; color: var(--ash); font-size: 18px; }
+.posts { display: grid; padding-block: 12px 48px; }
+.card { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 8px 28px; padding-block: 28px; border-bottom: 1px solid var(--graphite); text-decoration: none; color: var(--text); }
+.card:hover h2 { color: var(--volt); }
+.card .meta { font-family: var(--f-mono); font-size: 12px; letter-spacing: .1em; color: var(--ash); text-transform: uppercase; padding-top: 6px; }
+.card .body { display: grid; gap: 8px; }
+.card p { margin: 0; color: var(--ash); max-width: 64ch; }
+@media (max-width: 640px) { .card { grid-template-columns: 1fr; } }
+
+/* Post */
+.post-head { display: grid; gap: 16px; padding-block: 44px 28px; max-width: 760px; }
+.byline { font-size: 15px; color: var(--ash); }
+.byline strong { color: var(--text); font-weight: 600; }
+.short { background: var(--surface); border-left: 3px solid var(--volt); padding: 18px 20px; max-width: 760px; display: grid; gap: 6px; }
+.short .eyebrow { color: var(--volt); }
+.short p { margin: 0; font-size: 18px; }
+.prose { max-width: 68ch; padding-block: 12px 40px; }
+.prose h2 { margin-top: 44px; margin-bottom: 4px; }
+.prose p, .prose ul { margin: 14px 0 0; }
+.prose ul { padding-left: 20px; display: grid; gap: 8px; }
+.prose blockquote { margin: 22px 0 0; padding-left: 18px; border-left: 1px solid var(--graphite); color: var(--ash); font-style: italic; }
+.prose .num { font-family: var(--f-mono); font-variant-numeric: tabular-nums; font-size: .95em; }
+.pj { font-family: var(--f-mono); font-size: 13px; color: var(--warn); background: var(--raised); padding: 1px 6px; white-space: normal; }
+.gbb { border: 1px solid var(--graphite); margin-top: 18px; }
+.gbb div { display: grid; grid-template-columns: 90px minmax(0, 1fr); gap: 14px; padding: 14px 16px; border-bottom: 1px solid var(--graphite); }
+.gbb div:last-child { border-bottom: 0; }
+.gbb b { font-family: var(--f-mono); font-size: 12px; letter-spacing: .1em; color: var(--volt); padding-top: 4px; }
+.price { border: 1px solid var(--graphite); margin-top: 18px; display: grid; grid-template-columns: minmax(0, 1fr) auto; }
+.price div { padding: 11px 14px; border-bottom: 1px solid var(--graphite); }
+.price div:nth-last-child(-n+2) { border-bottom: 0; }
+.price .v { font-family: var(--f-mono); font-variant-numeric: tabular-nums; text-align: right; }
+.src { font-size: 13px; color: var(--ash); margin-top: 8px !important; }
+
+.author { border-top: 1px solid var(--graphite); padding-block: 28px; max-width: 760px; display: grid; gap: 8px; font-size: 15px; color: var(--ash); }
+.author strong { color: var(--text); }
+
+/* Checklist signup */
+.signup { background: var(--surface); border: 1px solid var(--graphite); padding: 28px 24px; display: grid; gap: 14px; margin-block: 8px 48px; }
+.signup p { margin: 0; color: var(--ash); max-width: 60ch; }
+.ghl-slot { border: 1px dashed var(--graphite); padding: 18px; font-family: var(--f-mono); font-size: 13px; color: var(--ash); }
+.cta { display: inline-block; font-family: var(--f-display); font-weight: 700; font-size: 20px; text-transform: uppercase; letter-spacing: .03em; background: var(--volt); color: var(--canvas); padding: 12px 20px; text-decoration: none; justify-self: start; }
+
+.site-foot { border-top: 1px solid var(--graphite); }
+.site-foot .shell { padding-block: 24px 40px; display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; font-size: 13px; color: var(--ash); }
+.site-foot a { color: var(--ash); }
+
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }

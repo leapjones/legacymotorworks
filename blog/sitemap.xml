@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Blog sitemap. Reference it from the main site's robots.txt or sitemap index:
+     Sitemap: https://legacy-motorworks.com/blog/sitemap.xml
+     Add <lastmod> to each URL when it publishes. Only list signed-off posts. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://legacy-motorworks.com/blog</loc></url>
+  <url><loc>https://legacy-motorworks.com/blog/spec-e46-cost</loc></url>
+  <url><loc>https://legacy-motorworks.com/blog/buying-a-used-spec-e46</loc></url>
+  <url><loc>https://legacy-motorworks.com/blog/control-arm-bushings</loc></url>
+</urlset>
