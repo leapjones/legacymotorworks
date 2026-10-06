@@ -20,7 +20,7 @@ Static pages served at `legacy-motorworks.com/blog`. Plain HTML and one styleshe
 - One question it answers, in the `FAQPage` JSON-LD and the on-page "Short answer" block, with the same text in both
 - `BlogPosting` JSON-LD with Peter as author and Legacy as publisher
 - A canonical URL on `https://legacy-motorworks.com/blog/<slug>`
-- The Inspection Checklist signup slot and the author box with sourced race results
+- A "Get your buying checklist" button to `/inspection-checklist`, and the author box with race results
 
 ## Publishing a post
 
@@ -47,7 +47,8 @@ grep -rniE "—|–|\bseen\b|luxury|premium|exclusive|unlock|hack|guru|leverage|
 
 ## Still to wire up
 
-- GHL form embed in each `.ghl-slot` (Inspection Checklist: name, email, interest level)
+- GHL form embed and delivery email on `/inspection-checklist.html` (name, email, interest level). It's the only form, so every post sends signups to one place
+- Source link for the 2025 NASA NorCal championship (LJ-confirmed, no public link yet)
 - Confirm the live site's contact page path (nav links to `/contact`)
 - Add `Sitemap: https://legacy-motorworks.com/blog/sitemap.xml` to the main site's robots.txt
 - Add a Blog link to the main site navigation
